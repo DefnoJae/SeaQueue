@@ -1,6 +1,6 @@
 # SeaQueue
 
-A lightweight **Watch Later** tray for Seanime.
+A lightweight **Watch Later** tray for Seanime.\n\nSeaQueue uses a PNG icon for reliable rendering inside Seanime.
 
 SeaQueue is intentionally separate from your AniList planning list. It gives you a quick place to stash anime you want to come back to without changing their AniList status.
 
@@ -36,4 +36,4 @@ SeaQueue stores its queue locally through Seanime's plugin `$storage` API. It do
 
 ## Version
 
-Current release: **0.1.5**
+Current release: **0.1.6**
