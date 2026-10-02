@@ -28,13 +28,12 @@ function init() {
 
     const mediaTitle = (media, id) => {
       if (!media) return `Anime #${id}`;
-      return (
-        (media.title &&
-          (media.title.english ||
-            media.title.userPreferred ||
-            media.title.romaji)) ||
-        `Anime #${id}`
-      );
+      const raw =
+        media.title &&
+        (media.title.english ||
+          media.title.userPreferred ||
+          media.title.romaji);
+      return raw ? String(raw) : `Anime #${id}`;
     };
 
     const toQueueItem = (media, id) => ({
@@ -91,16 +90,23 @@ function init() {
       tray.close();
     };
 
-    ctx.screen.onNavigate((event) => {
-      const pathname = String(event.pathname || "");
+    const screenState = ctx.screen.state();
+
+    tray.onOpen(() => {
+      const screen = screenState.get() || {};
+      const pathname = String(screen.pathname || "");
       const isAnimeEntry =
         pathname === "/entry" || pathname === "/offline/entry/anime";
       const rawId =
-        isAnimeEntry && event.searchParams ? event.searchParams.id || "" : "";
+        isAnimeEntry && screen.searchParams
+          ? screen.searchParams.id || ""
+          : "";
       const parsed = rawId ? parseInt(String(rawId), 10) : 0;
       currentMediaId.set(Number.isFinite(parsed) && parsed > 0 ? parsed : 0);
+
+      // Refresh persisted data only when the tray is actually opened.
+      queue.set(readQueue());
     });
-    ctx.screen.loadCurrent();
 
     ctx.registerEventHandler("sq-add-current", () => {
       const id = currentMediaId.get();
