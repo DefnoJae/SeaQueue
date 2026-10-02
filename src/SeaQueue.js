@@ -1,55 +1,61 @@
-const STORAGE_KEY = "watchLater";
-const MAX_QUEUE_SIZE = 250;
-
-function readQueue() {
-  try {
-    const value = $storage.get(STORAGE_KEY);
-    if (!Array.isArray(value)) return [];
-
-    return value
-      .filter((item) => item && Number(item.id) > 0)
-      .map((item) => ({
-        id: Number(item.id),
-        title: String(item.title || `Anime #${item.id}`),
-        poster: String(item.poster || ""),
-        year: item.year ? Number(item.year) : undefined,
-        format: item.format ? String(item.format) : undefined,
-        episodes: item.episodes ? Number(item.episodes) : undefined,
-        addedAt: Number(item.addedAt || 0),
-      }))
-      .sort((a, b) => b.addedAt - a.addedAt);
-  } catch (_) {
-    return [];
-  }
-}
-
-function mediaTitle(media, id) {
-  if (!media) return `Anime #${id}`;
-  return (
-    (media.title && (media.title.english || media.title.userPreferred || media.title.romaji)) ||
-    `Anime #${id}`
-  );
-}
-
-function toQueueItem(media, id) {
-  return {
-    id,
-    title: mediaTitle(media, id),
-    poster: String(
-      (media.coverImage && (media.coverImage.large || media.coverImage.medium)) || ""
-    ),
-    year: media.startDate && media.startDate.year ? media.startDate.year : undefined,
-    format: media.format ? String(media.format) : undefined,
-    episodes: media.episodes || undefined,
-    addedAt: Date.now(),
-  };
-}
-
 function init() {
   $ui.register((ctx) => {
+    const STORAGE_KEY = "watchLater";
+    const MAX_QUEUE_SIZE = 250;
+    const ICON_URL =
+      "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.svg";
+
+    const readQueue = () => {
+      try {
+        const value = $storage.get(STORAGE_KEY);
+        if (!Array.isArray(value)) return [];
+        return value
+          .filter((item) => item && Number(item.id) > 0)
+          .map((item) => ({
+            id: Number(item.id),
+            title: String(item.title || `Anime #${item.id}`),
+            poster: String(item.poster || ""),
+            year: item.year ? Number(item.year) : undefined,
+            format: item.format ? String(item.format) : undefined,
+            episodes: item.episodes ? Number(item.episodes) : undefined,
+            addedAt: Number(item.addedAt || 0),
+          }))
+          .sort((a, b) => b.addedAt - a.addedAt);
+      } catch (_) {
+        return [];
+      }
+    };
+
+    const mediaTitle = (media, id) => {
+      if (!media) return `Anime #${id}`;
+      return (
+        (media.title &&
+          (media.title.english ||
+            media.title.userPreferred ||
+            media.title.romaji)) ||
+        `Anime #${id}`
+      );
+    };
+
+    const toQueueItem = (media, id) => ({
+      id,
+      title: mediaTitle(media, id),
+      poster: String(
+        (media.coverImage &&
+          (media.coverImage.large || media.coverImage.medium)) ||
+          "",
+      ),
+      year:
+        media.startDate && media.startDate.year
+          ? media.startDate.year
+          : undefined,
+      format: media.format ? String(media.format) : undefined,
+      episodes: media.episodes || undefined,
+      addedAt: Date.now(),
+    });
+
     const tray = ctx.newTray({
-      iconUrl:
-        "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.svg",
+      iconUrl: ICON_URL,
       withContent: true,
     });
 
@@ -102,13 +108,11 @@ function init() {
         ctx.toast.info("Open an anime detail page first.");
         return;
       }
-
       const media = getAnime(id);
       if (!media) {
         ctx.toast.warning("SeaQueue could not read this anime yet.");
         return;
       }
-
       const existing = queue.get().filter((item) => item.id !== id);
       persist([toQueueItem(media, id), ...existing]);
       ctx.toast.success("Added to SeaQueue");
@@ -139,15 +143,12 @@ function init() {
         [
           tray.flex(
             [
-              tray.img(
-                "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.svg",
-                {
-                  alt: "SeaQueue",
-                  width: "34px",
-                  height: "34px",
-                  style: { borderRadius: "9px" },
-                },
-              ),
+              tray.img(ICON_URL, {
+                alt: "SeaQueue",
+                width: "34px",
+                height: "34px",
+                style: { borderRadius: "9px" },
+              }),
               tray.stack(
                 [
                   tray.text("SeaQueue", {
@@ -427,4 +428,3 @@ function init() {
     });
   });
 }
-
