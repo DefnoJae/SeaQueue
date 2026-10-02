@@ -13,7 +13,7 @@ SeaQueue is intentionally separate from your AniList planning list. It gives you
 - Shows up to 5 saved anime as compact poster cards.
 - Opens any saved anime directly in Seanime with a Watch button.
 - Supports removing individual entries or clearing the full queue.
-- Shows the number of saved anime as the tray badge.
+- Shows the number of saved anime as the tray badge.\n- Automatically removes a saved anime after Seanime successfully marks it as **COMPLETED**.
 
 ## Install
 
@@ -36,4 +36,4 @@ SeaQueue stores its queue locally through Seanime's plugin `$storage` API. It do
 
 ## Version
 
-Current release: **0.1.4**
+Current release: **0.1.5**
