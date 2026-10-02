@@ -1,7 +1,7 @@
 {
   "id": "SeaQueue",
   "name": "SeaQueue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "manifestURI": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/Manifest.json",
   "language": "typescript",
   "type": "plugin",
@@ -11,7 +11,7 @@
   "website": "https://github.com/DefnoJae/SeaQueue",
   "readme": "https://github.com/DefnoJae/SeaQueue/blob/main/README.md",
   "lang": "en",
-  "payloadURI": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/src/SeaQueue.ts",
+  "payloadURI": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/src/SeaQueue.js",
   "plugin": {
     "version": "1",
     "permissions": {
