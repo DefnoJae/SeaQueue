@@ -1,7 +1,7 @@
 {
   "id": "SeaQueue",
   "name": "SeaQueue",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "manifestURI": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/Manifest.json",
   "language": "typescript",
   "type": "plugin",
