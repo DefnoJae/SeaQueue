@@ -1,7 +1,7 @@
 function init() {
   $ui.register((ctx) => {
     const STORAGE_KEY = "watchLater";
-    const MAX_QUEUE_SIZE = 250;
+    const MAX_QUEUE_SIZE = 5;
     const ICON_URL =
       "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.svg";
 
@@ -20,7 +20,8 @@ function init() {
             episodes: item.episodes ? Number(item.episodes) : undefined,
             addedAt: Number(item.addedAt || 0),
           }))
-          .sort((a, b) => b.addedAt - a.addedAt);
+          .sort((a, b) => b.addedAt - a.addedAt)
+          .slice(0, MAX_QUEUE_SIZE);
       } catch (_) {
         return [];
       }
@@ -119,7 +120,18 @@ function init() {
         ctx.toast.warning("SeaQueue could not read this anime yet.");
         return;
       }
-      const existing = queue.get().filter((item) => item.id !== id);
+
+      const currentItems = queue.get();
+      const alreadySaved = currentItems.some((item) => item.id === id);
+
+      if (!alreadySaved && currentItems.length >= MAX_QUEUE_SIZE) {
+        ctx.toast.warning(
+          "SeaQueue is full. Remove one of your 5 saved anime first.",
+        );
+        return;
+      }
+
+      const existing = currentItems.filter((item) => item.id !== id);
       persist([toQueueItem(media, id), ...existing]);
       ctx.toast.success("Added to SeaQueue");
     });
@@ -144,6 +156,7 @@ function init() {
       const currentMedia = getAnime(currentId);
       const currentSaved =
         currentId > 0 && items.some((item) => item.id === currentId);
+      const queueFull = items.length >= MAX_QUEUE_SIZE && !currentSaved;
 
       const header = tray.flex(
         [
@@ -256,11 +269,20 @@ function init() {
                     style: { opacity: "0.6", fontSize: "0.76rem" },
                   }),
               tray.button(
-                currentSaved ? "✓ In SeaQueue · Remove" : "+ Add to SeaQueue",
+                currentSaved
+                  ? "✓ In SeaQueue · Remove"
+                  : queueFull
+                    ? "SeaQueue Full (5/5)"
+                    : "+ Add to SeaQueue",
                 {
-                  onClick: currentSaved ? "sq-remove-current" : "sq-add-current",
+                  onClick: currentSaved
+                    ? "sq-remove-current"
+                    : queueFull
+                      ? undefined
+                      : "sq-add-current",
                   intent: currentSaved ? "gray-subtle" : "primary",
                   size: "md",
+                  disabled: queueFull,
                   style: { width: "100%" },
                 },
               ),
@@ -271,7 +293,7 @@ function init() {
 
         blocks.push(
           tray.flex(currentInfo, {
-            gap: 3,
+            gap: 2,
             className: "sq-current",
             style: { alignItems: "stretch" },
           }),
@@ -286,26 +308,6 @@ function init() {
           }),
         );
       }
-
-      blocks.push(
-        tray.flex(
-          [
-            tray.text("WATCH LATER", {
-              style: {
-                fontSize: "0.72rem",
-                fontWeight: "700",
-                letterSpacing: ".08em",
-                opacity: ".62",
-                flex: "1",
-              },
-            }),
-            tray.text(`${items.length} saved`, {
-              style: { fontSize: "0.75rem", opacity: ".5" },
-            }),
-          ],
-          { style: { alignItems: "center" } },
-        ),
-      );
 
       if (!items.length) {
         blocks.push(
@@ -383,14 +385,14 @@ function init() {
             tray.flex(
               [
                 tray.tooltip(
-                  tray.button("Open →", {
+                  tray.button("Watch", {
                     onClick: ctx.eventHandler(`sq-open-${item.id}`, () =>
                       openAnime(item.id),
                     ),
                     size: "sm",
                     intent: "gray-subtle",
                   }),
-                  { text: "Open anime in Seanime" },
+                  { text: "Watch in Seanime" },
                 ),
                 tray.tooltip(
                   tray.button("✕", {
@@ -430,7 +432,7 @@ function init() {
         );
       }
 
-      return tray.stack(blocks, { gap: 3 });
+      return tray.stack(blocks, { gap: 2 });
     });
   });
 }
