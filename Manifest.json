@@ -1,1 +1,22 @@
-
+{
+  "id": "SeaQueue",
+  "name": "SeaQueue",
+  "version": "0.1.0",
+  "manifestURI": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/Manifest.json",
+  "language": "typescript",
+  "type": "plugin",
+  "description": "A lightweight Watch Later queue for Seanime. Save anime from the current detail page and jump back to them anytime.",
+  "author": "Jae",
+  "icon": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.svg",
+  "website": "https://github.com/DefnoJae/SeaQueue",
+  "readme": "https://github.com/DefnoJae/SeaQueue/blob/main/README.md",
+  "lang": "en",
+  "payloadURI": "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/src/SeaQueue.ts",
+  "plugin": {
+    "version": "1",
+    "permissions": {
+      "scopes": ["anilist", "storage"]
+    }
+  },
+  "isDevelopment": false
+}
