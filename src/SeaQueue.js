@@ -1,4 +1,43 @@
 function init() {
+  const markCompleted = (event) => {
+    try {
+      if (event.mediaId != null) {
+        const key = "seaqueue-completed-" + String(event.mediaId);
+        if (String(event.status || "") === "COMPLETED") {
+          $store.set(key, true);
+        } else {
+          $store.remove(key);
+        }
+      }
+    } catch (_) {}
+    event.next();
+  };
+
+  const removeCompleted = (event) => {
+    try {
+      if (event.mediaId != null) {
+        const mediaId = Number(event.mediaId);
+        const key = "seaqueue-completed-" + String(mediaId);
+        if ($store.get(key)) {
+          $store.remove(key);
+          const value = $storage.get("watchLater");
+          if (Array.isArray(value)) {
+            const next = value.filter(
+              (item) => item && Number(item.id) !== mediaId,
+            );
+            $storage.set("watchLater", next);
+          }
+        }
+      }
+    } catch (_) {}
+    event.next();
+  };
+
+  $app.onPreUpdateEntry(markCompleted);
+  $app.onPostUpdateEntry(removeCompleted);
+  $app.onPreUpdateEntryProgress(markCompleted);
+  $app.onPostUpdateEntryProgress(removeCompleted);
+
   $ui.register((ctx) => {
     const STORAGE_KEY = "watchLater";
     const MAX_QUEUE_SIZE = 5;
@@ -126,7 +165,7 @@ function init() {
 
       if (!alreadySaved && currentItems.length >= MAX_QUEUE_SIZE) {
         ctx.toast.warning(
-          "SeaQueue is full. Remove one of your 5 saved anime first.",
+          "Watch later limit reached. Remove an entry or complete one to proceed.",
         );
         return;
       }
@@ -134,6 +173,12 @@ function init() {
       const existing = currentItems.filter((item) => item.id !== id);
       persist([toQueueItem(media, id), ...existing]);
       ctx.toast.success("Added to SeaQueue");
+    });
+
+    ctx.registerEventHandler("sq-limit-reached", () => {
+      ctx.toast.warning(
+        "Watch later limit reached. Remove an entry or complete one to proceed.",
+      );
     });
 
     ctx.registerEventHandler("sq-remove-current", () => {
@@ -278,11 +323,10 @@ function init() {
                   onClick: currentSaved
                     ? "sq-remove-current"
                     : queueFull
-                      ? undefined
+                      ? "sq-limit-reached"
                       : "sq-add-current",
                   intent: currentSaved ? "gray-subtle" : "primary",
                   size: "md",
-                  disabled: queueFull,
                   style: { width: "100%" },
                 },
               ),
