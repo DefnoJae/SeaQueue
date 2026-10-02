@@ -42,7 +42,7 @@ function init() {
     const STORAGE_KEY = "watchLater";
     const MAX_QUEUE_SIZE = 5;
     const ICON_URL =
-      "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.svg";
+      "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.png";
 
     const readQueue = () => {
       try {
