@@ -1,5 +1,4 @@
 function init() {
-  const STORAGE_KEY = "watchLater";
   const MAX_PER_CATEGORY = 5;
 
   const markCompleted = (event) => {
@@ -20,10 +19,10 @@ function init() {
         const key = "seaqueue-completed-" + String(mediaId);
         if ($store.get(key)) {
           $store.remove(key);
-          const value = $storage.get(STORAGE_KEY);
+          const value = $storage.get("watchLater");
           if (Array.isArray(value)) {
             $storage.set(
-              STORAGE_KEY,
+              "watchLater",
               value.filter((item) => item && Number(item.id) !== mediaId),
             );
           }
@@ -39,6 +38,8 @@ function init() {
   $app.onPostUpdateEntryProgress(removeCompleted);
 
   $ui.register((ctx) => {
+    const STORAGE_KEY = "watchLater";
+    const MAX_PER_CATEGORY = 5;
     const ICON_URL =
       "https://raw.githubusercontent.com/DefnoJae/SeaQueue/refs/heads/main/assets/icon.png";
 
