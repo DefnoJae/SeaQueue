@@ -10,7 +10,7 @@ SeaQueue is intentionally separate from your AniList planning list. It gives you
 - Shows the anime poster, title, format, year and episode count in the SeaQueue tray.
 - Adds or removes the current anime with one click.
 - Keeps a persistent local Watch Later queue using Seanime plugin storage.
-- Shows up to 5 saved anime as compact poster cards.
+- Shows up to 5 anime, 5 manga, and 5 light novels as compact poster cards.
 - Opens any saved anime directly in Seanime with a Watch button.
 - Supports removing individual entries or clearing the full queue.
 - Shows the number of saved anime as the tray badge.\n- Automatically removes a saved anime after Seanime successfully marks it as **COMPLETED**.
@@ -36,4 +36,5 @@ SeaQueue stores its queue locally through Seanime's plugin `$storage` API. It do
 
 ## Version
 
-Current release: **0.1.6**
+Current release: **0.2.0**
+\n\n## v0.2.0\n\n- Added Manga recognition and Read navigation.\n- Added Light Novel recognition (AniList MANGA entries with NOVEL format).\n- Separate limits: 5 Anime, 5 Manga, and 5 Light Novels.\n- Existing SeaQueue anime entries are preserved during migration.\n
